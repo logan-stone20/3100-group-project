@@ -1,4 +1,5 @@
 const express = require("express");
+const stats_router = require("./routes/stats");
 const mongo = require("./utils/db");
 const port = 3000;
 
@@ -15,6 +16,8 @@ loadDBClient();
 const app = express();
 
 app.use(express.json());
+
+app.use("/stats", stats_router);
 
 server = app.listen(port, () => {
   console.log("Example app listening at http://localhost:%d", port);
