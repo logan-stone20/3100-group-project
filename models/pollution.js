@@ -37,6 +37,7 @@ class Pollution {
     this.SOX = SOX;
     this.NOX = NOX;
     this.VOC = VOC;
+    this.CO = CO;
     this.NH3 = NH3;
     this.Pb = Pb;
     this.Hg = Hg;
