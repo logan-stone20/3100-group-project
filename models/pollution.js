@@ -3,7 +3,7 @@ const client = require("../utils/db.js");
 
 async function _get_pollution_stats_collection(db) {
   try {
-    const collection = await db.collection("pollution-stats");
+    const collection = await db.collection("pollution");
     return collection;
   } catch (err) {
     throw err;
@@ -66,6 +66,40 @@ class Pollution {
     const validation = new Validator(this, rules);
     return validation.passes();
   }
-}
 
+  // This function currently just gets total NOX per province
+  // to test just run app and look at console :)
+  static async getFilteredSearchByProvince(db, filters) {
+    return new Promise(async function (resolve, reject) {
+      const yearStart = filters.yearStart;
+      const yearEnd = filters.yearEnd;
+      delete filters.yearStart;
+      delete filters.yearEnd;
+
+      const match = {
+        $match: {
+          Year: {
+            $gte: yearStart,
+            $lte: yearEnd,
+          },
+        },
+      };
+      const group = {
+        $group: {
+          _id: "$Region",
+          NOX: { $sum: "$NOX (t)" },
+        },
+      };
+      try {
+        const collection = await _get_pollution_stats_collection(db);
+        const result = await collection.aggregate([match, group]).toArray();
+        resolve(result);
+      } catch (err) {
+        reject(
+          "There was an error while retrieving your Book. (err:" + err + ")"
+        );
+      }
+    });
+  }
+}
 module.exports = Pollution;
