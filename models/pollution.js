@@ -119,42 +119,6 @@ class Pollution {
       }
     });
   }
-
-  static async getProvinceBarData(db, filters) {
-    return new Promise(async function (resolve, reject) {
-      console.log(filters);
-      try {
-        const yearStart = filters.yearStart;
-        const yearEnd = filters.yearEnd;
-        delete filters.yearStart;
-        delete filters.yearEnd;
-
-        const match = {
-          $match: {
-            Year: {
-              $gte: yearStart,
-              $lte: yearEnd,
-            },
-          },
-        };
-
-        const group = {
-          $group: {
-            _id: "$Region",
-            NOX: { $sum: "$NOX (t)" },
-          },
-        };
-
-        const collection = await _get_pollution_stats_collection(db);
-        const result = await collection.aggregate([match, group]).toArray();
-        resolve(result);
-      } catch (err) {
-        reject(
-          "There was an error while retrieving your Book. (err:" + err + ")"
-        );
-      }
-    });
-  }
 }
 
 module.exports = Pollution;
