@@ -5,13 +5,21 @@ const pie = async (req, res) => {
   let db = req.db;
   try {
     const result = await Pollution.getFilteredSearch(db, req);
-    res.send(obj);
+    res.send(result);
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
   }
 };
 
-const bar = async (req, res) => {};
+const bar = async (req, res) => {
+  let db = req.db;
+  try {
+    const result = await Pollution.getProvinceBarData(db, req);
+    res.send(obj);
+  } catch (err) {
+    res.send("There was an error  (err:" + err + ")");
+  }
+};
 
 const heatmap = async (req, res) => {};
 

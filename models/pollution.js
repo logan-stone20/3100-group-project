@@ -69,7 +69,44 @@ class Pollution {
 
   // This function currently just gets total NOX per province
   // to test just run app and look at console :)
-  static async getFilteredSearchByProvince(db, filters) {
+  static async getFilteredSearchByProvince(db, filters, toxins) {
+    return new Promise(async function (resolve, reject) {
+      const yearStart = filters.yearStart;
+      const yearEnd = filters.yearEnd;
+      delete filters.yearStart;
+      delete filters.yearEnd;
+
+      const match = {
+        $match: {
+          Year: {
+            $gte: yearStart,
+            $lte: yearEnd,
+          },
+          Region: {
+            $in: filters.provinces,
+          },
+        },
+      };
+      const group = {
+        $group: {
+          _id: "$Region",
+          NOX: { $sum: "$NOX (t)" },
+          SOX: { $sum: "$SOX (t)" },
+        },
+      };
+      try {
+        const collection = await _get_pollution_stats_collection(db);
+        const result = await collection.aggregate([match, group]).toArray();
+        resolve(result);
+      } catch (err) {
+        reject(
+          "There was an error while retrieving your Book. (err:" + err + ")"
+        );
+      }
+    });
+  }
+
+  static async getProvinceBarData(db, filters) {
     return new Promise(async function (resolve, reject) {
       const yearStart = filters.yearStart;
       const yearEnd = filters.yearEnd;
@@ -84,6 +121,7 @@ class Pollution {
           },
         },
       };
+
       const group = {
         $group: {
           _id: "$Region",
@@ -102,4 +140,5 @@ class Pollution {
     });
   }
 }
+
 module.exports = Pollution;

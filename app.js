@@ -8,10 +8,12 @@ var db;
 async function loadDBClient() {
   try {
     db = await mongo.connectToDB();
-    // Returns a promise that will resolve to the list of the collections
-
     console.log(
-      await Pollution.getFilteredSearch(db, { yearStart: 2000, yearEnd: 2015 })
+      await Pollution.getFilteredSearchByProvince(db, {
+        yearStart: 2000,
+        yearEnd: 2001,
+        provinces: ["NL", "NS"],
+      })
     );
   } catch (err) {
     throw new Error("Could not connect to the Mongo DB");
@@ -25,7 +27,7 @@ app.use(express.json());
 
 app.use("/stats", stats_router);
 
-server = app.listen(port, () => {
+server = app.listen(port, async () => {
   console.log("Example app listening at http://localhost:%d", port);
 });
 
