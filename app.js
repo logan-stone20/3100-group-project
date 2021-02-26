@@ -13,9 +13,11 @@ async function loadDBClient() {
         yearStart: 2000,
         yearEnd: 2001,
         provinces: ["NL", "NS"],
+        toxins: ["NOX", "SOX", "Pb", "VOC"],
       })
     );
   } catch (err) {
+    console.log(err);
     throw new Error("Could not connect to the Mongo DB");
   }
 }

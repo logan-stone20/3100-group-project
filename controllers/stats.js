@@ -13,9 +13,10 @@ const pie = async (req, res) => {
 
 const bar = async (req, res) => {
   let db = req.db;
+  const filters = req.body.filters;
   try {
-    const result = await Pollution.getProvinceBarData(db, req);
-    res.send(obj);
+    const result = await Pollution.getProvinceBarData(db, filters);
+    res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
   }

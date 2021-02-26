@@ -1,5 +1,6 @@
 const Validator = require("validatorjs");
 const client = require("../utils/db.js");
+const { columnToMongo } = require("../utils/consts.js");
 
 async function _get_pollution_stats_collection(db) {
   try {
@@ -67,9 +68,12 @@ class Pollution {
     return validation.passes();
   }
 
-  // This function currently just gets total NOX per province
-  // to test just run app and look at console :)
-  static async getFilteredSearchByProvince(db, filters, toxins) {
+  /* 
+    Gets total pollutions per provice. All results will have an
+     _id field that is equal to the province code. There is an entry that
+     has _id = null which specifies totals across all provinces. 
+  */
+  static async getFilteredSearchByProvince(db, filters) {
     return new Promise(async function (resolve, reject) {
       const yearStart = filters.yearStart;
       const yearEnd = filters.yearEnd;
@@ -87,20 +91,29 @@ class Pollution {
           },
         },
       };
+
       const group = {
         $group: {
           _id: "$Region",
-          NOX: { $sum: "$NOX (t)" },
-          SOX: { $sum: "$SOX (t)" },
         },
       };
+
+      filters.toxins.forEach((key) => {
+        group.$group[key] = { $sum: columnToMongo[key] };
+      });
+
       try {
         const collection = await _get_pollution_stats_collection(db);
         const result = await collection.aggregate([match, group]).toArray();
+        group.$group._id = null;
+        const totals = await collection.aggregate([match, group]).toArray();
+        result.push(totals[0]);
         resolve(result);
       } catch (err) {
         reject(
-          "There was an error while retrieving your Book. (err:" + err + ")"
+          "There was an error while retrieving pollution data. (err:" +
+            err +
+            ")"
         );
       }
     });
