@@ -10,7 +10,7 @@ async function loadDBClient() {
     db = await mongo.connectToDB();
     console.log(
       await Pollution.getFilteredSearchByProvince(db, {
-        yearStart: 2000,
+        yearStart: 1994,
         yearEnd: 2001,
         provinces: ["NL", "NS"],
         toxins: ["NOX", "SOX", "Pb", "VOC"],
