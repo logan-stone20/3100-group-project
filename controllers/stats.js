@@ -1,6 +1,13 @@
 const Pollution = require("../models/pollution.js");
-const { connectToDB, getDb, closeDBConnection } = require("../utils/db.js");
 
+// To determine what data each endpoint needs, take a look at
+// the jsFiddles provided in the highcharts website demos!
+
+/*
+  This one is going to need groupedBy in the query function to
+  become a list if we want multilevel pie charts. (we'll have to 
+  group on province and source)
+*/
 const pie = async (req, res) => {
   let db = req.db;
   try {
@@ -23,6 +30,10 @@ const bar = async (req, res) => {
   }
 };
 
+/*
+  For this one I was thinking maybe perform two queries,
+  one for each province over the given time frame.
+*/
 const timeseries = async (req, res) => {
   let db = req.db;
   const filters = req.body.filters;
@@ -34,11 +45,12 @@ const timeseries = async (req, res) => {
   }
 };
 
+// Pretty sure heat map can just use the same info as the bar function
 const heatmap = async (req, res) => {};
 
-// Make all methods available for use.
 module.exports = {
   pie,
   bar,
   heatmap,
+  timeseries,
 };
