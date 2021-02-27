@@ -2,40 +2,9 @@ const assert = require("assert");
 const Pollution = require("../models/pollution");
 const axios = require("axios");
 const mongo = require("../utils/db");
-const { stat } = require("fs");
+const { provinces, toxins, sources } = require("../utils/consts");
 
 const url = "http://localhost:3000";
-
-const provinces = [
-  "ON",
-  "QC",
-  "NS",
-  "NB",
-  "MB",
-  "BC",
-  "PE",
-  "SK",
-  "AB",
-  "NL",
-  "NT",
-  "YT",
-  "NU",
-];
-
-const toxins = [
-  "TPM",
-  "PM10",
-  "PM25",
-  "SOX",
-  "NOX",
-  "VOC",
-  "CO",
-  "NH3",
-  "Pb",
-  "Cd",
-  "Hg",
-  "PAH",
-];
 
 const getRequest = (path) => axios.get(url + path);
 const postRequest = (path, data) => axios.post(url + path, data);
@@ -70,7 +39,7 @@ after(async function () {
 
 describe("Testing the Pollution Stats API", async function () {
   describe("Testing pollution queries - Simple cases", function () {
-    it("Success 1 - Test get all toxins totals by region query", async function () {
+    it("Success 1 - Test get all toxins totals by region query with no filters", async function () {
       const stats = await Pollution.getTotalsByGrouping(db, {}, "region");
 
       provinces.forEach((province) =>
@@ -156,6 +125,16 @@ describe("Testing the Pollution Stats API", async function () {
 
       // Make sure totals over all years is included
       assert.strictEqual(stats[stats.length - 1]._id, null);
+    });
+    it("Success 6 - Test get all toxins totals by source query with no filters", async function () {
+      const stats = await Pollution.getTotalsByGrouping(db, {}, "source");
+
+      sources.forEach((source) => {
+        assert.notStrictEqual(
+          stats.find((stat) => stat._id === source),
+          undefined
+        );
+      });
     });
   });
 });

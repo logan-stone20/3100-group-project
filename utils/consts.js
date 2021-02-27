@@ -44,4 +44,18 @@ const toxins = [
   "PAH",
 ];
 
-module.exports = { columnToMongo, toxins };
+const sources = [
+  "Agriculture",
+  "Commercial / Residential / Institutional",
+  "Dust",
+  "Electric Power Generation (Utilities)",
+  "Fires",
+  "Incineration and Waste",
+  "Manufacturing",
+  "Oil and Gas Industry",
+  "Ore and Mineral Industries",
+  "Paints and Solvents",
+  "Transportation and Mobile Equipment",
+];
+
+module.exports = { columnToMongo, toxins, provinces, sources };

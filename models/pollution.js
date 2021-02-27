@@ -14,6 +14,7 @@ async function _get_pollution_stats_collection(db) {
 const groupedByToMongo = {
   year: "$Year",
   region: "$Region",
+  source: "$Source",
 };
 
 class Pollution {
@@ -56,6 +57,10 @@ class Pollution {
      _id field that is equal to the province code. There is an entry that
      has _id = null which specifies totals across all provinces. 
   */
+
+  // groupedBy is gonna have to become a list to become a list
+  // since we want to have multi level pie charts with provinces and
+  // their sectors
   static async getTotalsByGrouping(db, filters, groupedBy) {
     return new Promise(async function (resolve, reject) {
       try {
@@ -82,6 +87,10 @@ class Pollution {
           match.$match.Region = { $in: filters.provinces };
         }
 
+        if (filters.sectors) {
+          match.$match.Source = { $in: filters.sectors };
+        }
+
         const group = {
           $group: {},
         };
@@ -100,19 +109,21 @@ class Pollution {
 
         // All queries sorted in ascending order by _id
         const sort = { $sort: { _id: 1 } };
-
         const collection = await _get_pollution_stats_collection(db);
         const result = await collection
           .aggregate([match, group, sort])
           .toArray();
 
         // setting _id to null will get us an object totals over all years/regions
-        group.$group._id = null;
-        const totals = await collection
-          .aggregate([match, group, sort])
-          .toArray();
+        // grand total is already included in the source query
+        if (groupedBy !== "source") {
+          group.$group._id = null;
+          const totals = await collection
+            .aggregate([match, group, sort])
+            .toArray();
 
-        result.push(totals[0]);
+          result.push(totals[0]);
+        }
 
         resolve(result);
       } catch (err) {
