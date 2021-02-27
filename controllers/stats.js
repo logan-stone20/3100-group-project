@@ -14,8 +14,9 @@ const pie = async (req, res) => {
 const bar = async (req, res) => {
   let db = req.db;
   const filters = req.body.filters;
+  const groupedBy = req.body.groupedBy;
   try {
-    const result = await Pollution.getFilteredSearchByProvince(db, filters);
+    const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");

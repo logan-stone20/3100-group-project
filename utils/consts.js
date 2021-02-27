@@ -13,4 +13,35 @@ const columnToMongo = {
   PAH: "$PAH (kg)",
 };
 
-module.exports = { columnToMongo };
+const provinces = [
+  "ON",
+  "QC",
+  "NS",
+  "NB",
+  "MB",
+  "BC",
+  "PE",
+  "SK",
+  "AB",
+  "NL",
+  "NT",
+  "YT",
+  "NU",
+];
+
+const toxins = [
+  "TPM",
+  "PM10",
+  "PM25",
+  "SOX",
+  "NOX",
+  "VOC",
+  "CO",
+  "NH3",
+  "Pb",
+  "Cd",
+  "Hg",
+  "PAH",
+];
+
+module.exports = { columnToMongo, toxins };

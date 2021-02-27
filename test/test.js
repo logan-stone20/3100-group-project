@@ -70,20 +70,92 @@ after(async function () {
 
 describe("Testing the Pollution Stats API", async function () {
   describe("Testing pollution queries - Simple cases", function () {
-    it("Success 1 - Test getting all provinces and toxins query", async function () {
-      const stats = await Pollution.getFilteredSearchByProvince(db, {
-        yearStart: 2001,
-        yearEnd: 2018,
-        provinces: provinces,
-        toxins: toxins,
-      });
+    it("Success 1 - Test get all toxins totals by region query", async function () {
+      const stats = await Pollution.getTotalsByGrouping(db, {}, "region");
+
       provinces.forEach((province) =>
         assert.notStrictEqual(
           stats.find((stat) => stat._id == province),
           undefined
         )
       );
+      toxins.forEach((toxin) =>
+        assert.notStrictEqual(stats[0][toxin], undefined)
+      );
       assert.strictEqual(stats.filter((stat) => stat._id == null).length, 1);
+    });
+    it("Success 2 - Test get all toxins totals by year query", async function () {
+      const stats = await Pollution.getTotalsByGrouping(db, {}, "year");
+      assert.strictEqual(stats[0]._id, 1990);
+      assert.strictEqual(stats[stats.length - 2]._id, 2018);
+
+      // Make sure totals over all years is included
+      assert.strictEqual(stats[stats.length - 1]._id, null);
+    });
+    it("Success 3 - Test get all toxins totals by year query with lower bound on year", async function () {
+      const stats = await Pollution.getTotalsByGrouping(
+        db,
+        { yearStart: 2000 },
+        "year"
+      );
+      assert.strictEqual(stats[0]._id, 2000);
+      assert.strictEqual(stats[stats.length - 2]._id, 2018);
+
+      let year = 2000;
+      while (year <= 2018) {
+        assert.notStrictEqual(
+          stats.find((stat) => stat._id === year),
+          undefined
+        );
+        year++;
+      }
+
+      // Make sure totals over all years is included
+      assert.strictEqual(stats[stats.length - 1]._id, null);
+    });
+    it("Success 4 - Test get all toxins totals by year query with upper bound on year", async function () {
+      const stats = await Pollution.getTotalsByGrouping(
+        db,
+        { yearEnd: 2000 },
+        "year"
+      );
+
+      let year = 2000;
+      while (year >= 1990) {
+        assert.notStrictEqual(
+          stats.find((stat) => stat._id === year),
+          undefined
+        );
+        year--;
+      }
+
+      // stats.length - 2 because year range is inclusive and
+      // results contains a object containing totals over all years.
+      assert.strictEqual(10, stats.length - 2);
+
+      // Make sure totals over all years is included
+      assert.strictEqual(stats[stats.length - 1]._id, null);
+    });
+    it("Success 5 - Test get all toxins totals by year query with both bounds on year", async function () {
+      const stats = await Pollution.getTotalsByGrouping(
+        db,
+        { yearStart: 1997, yearEnd: 2010 },
+        "year"
+      );
+
+      assert.strictEqual(13, stats.length - 2);
+
+      let year = 2010;
+      while (year >= 1997) {
+        assert.notStrictEqual(
+          stats.find((stat) => stat._id === year),
+          undefined
+        );
+        year--;
+      }
+
+      // Make sure totals over all years is included
+      assert.strictEqual(stats[stats.length - 1]._id, null);
     });
   });
 });

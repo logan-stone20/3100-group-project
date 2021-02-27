@@ -1,6 +1,6 @@
 const Validator = require("validatorjs");
 const client = require("../utils/db.js");
-const { columnToMongo } = require("../utils/consts.js");
+const { columnToMongo, pollution, toxins } = require("../utils/consts.js");
 
 async function _get_pollution_stats_collection(db) {
   try {
@@ -10,6 +10,11 @@ async function _get_pollution_stats_collection(db) {
     throw err;
   }
 }
+
+const groupedByToMongo = {
+  year: "$Year",
+  region: "$Region",
+};
 
 class Pollution {
   constructor(
@@ -46,71 +51,69 @@ class Pollution {
     this.PAH = PAH;
   }
 
-  isValid() {
-    const rules = {
-      province: "required|string",
-      source: "required|string",
-      year: "required|integer",
-      TPM: "float",
-      PM10: "float",
-      PM25: "float",
-      SOX: "float",
-      NOX: "float",
-      VOC: "float",
-      NH3: "float",
-      Pb: "float",
-      Hg: "float",
-      Cd: "float",
-      PAH: "float",
-      PM25: "float",
-    };
-    const validation = new Validator(this, rules);
-    return validation.passes();
-  }
-
   /* 
-    Gets total pollutions per provice. All results will have an
+    Gets total pollutions per provice or region (specified by groupedBy). All results will have an
      _id field that is equal to the province code. There is an entry that
      has _id = null which specifies totals across all provinces. 
   */
-  static async getFilteredSearchByProvince(db, filters) {
+  static async getTotalsByGrouping(db, filters, groupedBy) {
     return new Promise(async function (resolve, reject) {
-      const yearStart = filters.yearStart;
-      const yearEnd = filters.yearEnd;
-      delete filters.yearStart;
-      delete filters.yearEnd;
-
-      const match = {
-        $match: {
-          Year: {
-            $gte: yearStart,
-            $lte: yearEnd,
-          },
-          Region: {
-            $in: filters.provinces,
-          },
-        },
-      };
-
-      const group = {
-        $group: {
-          _id: "$Region",
-        },
-      };
-
-      filters.toxins.forEach((key) => {
-        group.$group[key] = { $sum: columnToMongo[key] };
-      });
-
-      console.log(match);
-      console.log(group);
-
       try {
+        const yearStart = filters.yearStart;
+        const yearEnd = filters.yearEnd;
+        delete filters.yearStart;
+        delete filters.yearEnd;
+
+        const match = {
+          $match: {},
+        };
+
+        if (yearStart || yearEnd) {
+          match.$match.Year = {};
+          if (yearStart) {
+            match.$match.Year.$gte = yearStart;
+          }
+          if (yearEnd) {
+            match.$match.Year.$lte = yearEnd;
+          }
+        }
+
+        if (filters.provinces) {
+          match.$match.Region = { $in: filters.provinces };
+        }
+
+        const group = {
+          $group: {},
+        };
+
+        group.$group._id = groupedByToMongo[groupedBy];
+
+        if (filters.toxins) {
+          filters.toxins.forEach((key) => {
+            group.$group[key] = { $sum: columnToMongo[key] };
+          });
+        } else {
+          toxins.forEach((key) => {
+            group.$group[key] = { $sum: columnToMongo[key] };
+          });
+        }
+
+        // All queries sorted in ascending order by _id
+        const sort = { $sort: { _id: 1 } };
+
         const collection = await _get_pollution_stats_collection(db);
-        const result = await collection.aggregate([match, group]).toArray();
+        const result = await collection
+          .aggregate([match, group, sort])
+          .toArray();
+
+        // setting _id to null will get us an object totals over all years/regions
         group.$group._id = null;
-        const totals = await collection.aggregate([match, group]).toArray();
+        const totals = await collection
+          .aggregate([match, group, sort])
+          .toArray();
+
         result.push(totals[0]);
+
         resolve(result);
       } catch (err) {
         reject(
