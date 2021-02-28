@@ -35,7 +35,7 @@ class Pollution {
     Hg,
     PAH
   ) {
-    this.province = province;
+    this.region = region;
     this.year = year;
     this.source = source;
     this.TPM = TPM;
