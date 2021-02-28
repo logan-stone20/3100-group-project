@@ -64,10 +64,8 @@ class Pollution {
   static async getTotalsByGrouping(db, filters, groupedByList) {
     return new Promise(async function (resolve, reject) {
       try {
-        const yearStart = filters.yearStart;
-        const yearEnd = filters.yearEnd;
-        delete filters.yearStart;
-        delete filters.yearEnd;
+        const yearStart = filters?.yearStart;
+        const yearEnd = filters?.yearEnd;
 
         const match = {
           $match: {},
@@ -77,17 +75,19 @@ class Pollution {
           match.$match.Year = {};
           if (yearStart) {
             match.$match.Year.$gte = yearStart;
+            delete filters.yearStart;
           }
           if (yearEnd) {
             match.$match.Year.$lte = yearEnd;
+            delete filters.yearEnd;
           }
         }
 
-        if (filters.regions) {
+        if (filters?.regions) {
           match.$match.Region = { $in: filters.regions };
         }
 
-        if (filters.sectors) {
+        if (filters?.sectors) {
           match.$match.Source = { $in: filters.sectors };
         }
 
@@ -101,7 +101,7 @@ class Pollution {
           group.$group._id[column] = groupedByToMongo[column];
         });
 
-        if (filters.toxins) {
+        if (filters?.toxins) {
           filters.toxins.forEach((key) => {
             group.$group[key] = { $sum: columnToMongo[key] };
           });

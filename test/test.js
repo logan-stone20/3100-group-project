@@ -4,22 +4,6 @@ const axios = require("axios");
 const mongo = require("../utils/db");
 const { provinces, toxins, sources } = require("../utils/consts");
 
-const url = "http://localhost:3000";
-
-const getRequest = (path) => axios.get(url + path);
-const postRequest = (path, data) => axios.post(url + path, data);
-const deleteRequest = (path) => axios.delete(url + path);
-const putRequest = (path, data) => axios.put(url + path, data);
-
-async function getPollutionCollection(db) {
-  try {
-    const collection = await db.collection("pollution");
-    return collection;
-  } catch (err) {
-    throw err;
-  }
-}
-
 let db;
 before(async function () {
   try {
@@ -134,7 +118,7 @@ describe("Testing the Pollution Stats API", async function () {
         );
       });
     });
-    it("Success 6 - Test get all toxins totals grouped by source and province query with no filters", async function () {
+    it("Success 7 - Test get all toxins totals grouped by source and province query with no filters", async function () {
       const stats = await Pollution.getTotalsByGrouping(db, {}, [
         "Region",
         "Source",
@@ -156,25 +140,6 @@ describe("Testing the Pollution Stats API", async function () {
               stat._id.Region === province && stat._id.Source === "GRAND TOTAL"
           ),
           undefined
-        );
-      });
-    });
-  });
-  describe("Testing pollution API requests schema validation", async function () {
-    it("Fail 1 - Testing getting bar graph data", async function () {
-      return postRequest("/stats/bar", {
-        filters: { yearEnd: "s", yearStart: "x" },
-        groupedBy: ["Region"],
-      }).then((res) => {
-        assert.notStrictEqual(res.data.err, undefined);
-        assert.strictEqual(Object.keys(res.data.err).length, 2);
-        assert.strictEqual(
-          res.data.err["filters.yearStart"],
-          "x is not of a type(s) integer"
-        );
-        assert.strictEqual(
-          res.data.err["filters.yearEnd"],
-          "s is not of a type(s) integer"
         );
       });
     });

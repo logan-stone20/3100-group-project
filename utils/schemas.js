@@ -18,6 +18,7 @@ const filterSchema = {
         type: "string",
         enum: provinces,
       },
+      uniqueItems: true,
     },
     sectors: {
       type: "array",
@@ -25,6 +26,7 @@ const filterSchema = {
         type: "string",
         enum: sources,
       },
+      uniqueItems: true,
     },
   },
 };
@@ -65,6 +67,7 @@ const timeSeriesFilterSchema = {
         type: "string",
         enum: provinces,
       },
+      uniqueItems: true,
     },
     sectors: {
       type: "array",
@@ -72,6 +75,7 @@ const timeSeriesFilterSchema = {
         type: "string",
         enum: sources,
       },
+      uniqueItems: true,
     },
   },
   required: ["regions"],
@@ -83,6 +87,7 @@ const timeSeriesRequestSchema = {
   properties: {
     filters: { $ref: "/timeSeriesFilterSchema" },
   },
+  required: ["filters"],
 };
 
 validator.addSchema(filterSchema, "/filterSchema");

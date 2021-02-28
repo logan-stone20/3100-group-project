@@ -9,9 +9,8 @@ const {
 const formatValidationError = (validationInstance) => {
   const errObj = { err: {} };
   validationInstance.errors.forEach((err) => {
-    errObj.err[
-      err.property.replace("instance.", "")
-    ] = `${err.instance} ${err.message}`;
+    const property = err.property.replace("instance.", "");
+    errObj.err[property] = err.message;
   });
   console.log(errObj);
   return errObj;
