@@ -41,14 +41,14 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 3 - Testing request with invalid sector in sectors filter parameter", async function () {
+    it("Fail 3 - Testing request with invalid sector in sources filter parameter", async function () {
       return postRequest("/stats/bar", {
-        filters: { sectors: ["notASector"] },
+        filters: { sources: ["notASector"] },
         groupedBy: ["Region"],
       }).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
         assert.strictEqual(
-          res.data.err["filters.sectors[0]"].includes(
+          res.data.err["filters.sources[0]"].includes(
             "is not one of enum values"
           ),
           true
@@ -81,12 +81,12 @@ describe("Testing pollution API requests schema validation", async function () {
     });
     it("Fail 6 - Testing request with duplicate sector in sector parameter", async function () {
       return postRequest("/stats/bar", {
-        filters: { sectors: ["Manufacturing", "Manufacturing"] },
+        filters: { sources: ["Manufacturing", "Manufacturing"] },
       }).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
         assert.strictEqual(Object.keys(res.data.err).length, 1);
         assert.strictEqual(
-          res.data.err["filters.sectors"],
+          res.data.err["filters.sources"],
           "contains duplicate item"
         );
       });

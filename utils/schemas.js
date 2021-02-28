@@ -20,7 +20,7 @@ const filterSchema = {
       },
       uniqueItems: true,
     },
-    sectors: {
+    sources: {
       type: "array",
       items: {
         type: "string",
@@ -69,7 +69,7 @@ const timeSeriesFilterSchema = {
       },
       uniqueItems: true,
     },
-    sectors: {
+    sources: {
       type: "array",
       items: {
         type: "string",

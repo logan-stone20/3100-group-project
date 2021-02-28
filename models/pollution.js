@@ -60,7 +60,7 @@ class Pollution {
 
   // groupedBy is gonna have to become a list to become a list
   // since we want to have multi level pie charts with provinces and
-  // their sectors
+  // their sources
   static async getTotalsByGrouping(db, filters, groupedByList) {
     return new Promise(async function (resolve, reject) {
       try {
@@ -85,8 +85,8 @@ class Pollution {
           match.$match.Region = { $in: filters.regions };
         }
 
-        if (filters?.sectors) {
-          match.$match.Source = { $in: filters.sectors };
+        if (filters?.sources) {
+          match.$match.Source = { $in: filters.sources };
         }
 
         const group = {
