@@ -60,7 +60,11 @@ const timeseries = async (req, res) => {
   let db = req.db;
   const filters = req.body.filters;
   try {
-    const result = await Pollution.getTotalsByGrouping(db, filters, ["year"]);
+    const result = {}
+    filters.regions.forEach((region) => {
+      const filterForSingleProvince = {...req.body.filters, regions: [region]}
+      result[region] = await Pollution.getTotalsByGrouping(db, filterForSingleProvince, ["year"]);
+    })
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
