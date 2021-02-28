@@ -160,7 +160,7 @@ describe("Testing the Pollution Stats API", async function () {
       });
     });
   });
-  describe("Testing pollution API requests - Simple cases", async function () {
+  describe("Testing pollution API requests schema validation", async function () {
     it("Fail 1 - Testing getting bar graph data", async function () {
       return postRequest("/stats/bar", {
         filters: { yearEnd: "s", yearStart: "x" },
