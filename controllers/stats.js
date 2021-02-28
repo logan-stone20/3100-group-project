@@ -10,20 +10,22 @@ const validator = new Validator();
 const filterSchema = {
   id: "/filterSchema",
   type: "object",
-  yearStart: { type: "number" },
-  yearEnd: { type: "number" },
-  regions: {
-    type: "array",
-    contains: {
-      type: "string",
-      enum: provinces,
+  properties: {
+    yearStart: { type: "integer" },
+    yearEnd: { type: "integer" },
+    regions: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: provinces,
+      },
     },
-  },
-  sectors: {
-    type: "array",
-    items: {
-      type: "string",
-      enum: sources,
+    sectors: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: sources,
+      },
     },
   },
 };
@@ -47,9 +49,14 @@ const requestSchema = {
 validator.addSchema(filterSchema, "/filterSchema");
 
 const formatValidationError = (validationInstance) => {
-  return {
-    err: `${validationInstance.instance} ${validationInstance.message}`,
-  };
+  const errObj = { err: {} };
+  validationInstance.errors.forEach((err) => {
+    errObj.err[
+      err.property.replace("instance.", "")
+    ] = `${err.instance} ${err.message}`;
+  });
+  console.log(errObj);
+  return errObj;
 };
 
 const pie = async (req, res) => {
@@ -69,6 +76,8 @@ const pie = async (req, res) => {
 
 const bar = async (req, res) => {
   const validatorRes = validator.validate(req.body, requestSchema);
+  console.log(validatorRes);
+  console.log(validatorRes.valid);
   if (!validatorRes.valid) {
     res.send(formatValidationError(validatorRes));
     return;
@@ -80,6 +89,7 @@ const bar = async (req, res) => {
     const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
     res.send({ result: result });
   } catch (err) {
+    console.log(err);
     res.send("There was an error  (err:" + err + ")");
   }
 };

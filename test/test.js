@@ -161,11 +161,22 @@ describe("Testing the Pollution Stats API", async function () {
     });
   });
   describe("Testing pollution API requests - Simple cases", async function () {
-    it("Testing getting bar graph data", async function () {
+    it("Fail 1 - Testing getting bar graph data", async function () {
       return postRequest("/stats/bar", {
-        filters: { yee: "y" },
+        filters: { yearEnd: "s", yearStart: "x" },
         groupedBy: ["Region"],
-      }).then((res) => {});
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(Object.keys(res.data.err).length, 2);
+        assert.strictEqual(
+          res.data.err["filters.yearStart"],
+          "x is not of a type(s) integer"
+        );
+        assert.strictEqual(
+          res.data.err["filters.yearEnd"],
+          "s is not of a type(s) integer"
+        );
+      });
     });
   });
 });
