@@ -41,7 +41,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 2 - Testing request with invalid sector in sectors filter parameter", async function () {
+    it("Fail 3 - Testing request with invalid sector in sectors filter parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { sectors: ["notASector"] },
         groupedBy: ["Region"],
@@ -55,7 +55,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 3 - Testing request with invalid grouped by parameter", async function () {
+    it("Fail 4 - Testing request with invalid grouped by parameter", async function () {
       return postRequest("/stats/bar", {
         groupedBy: ["invalidValue"],
       }).then((res) => {
@@ -67,7 +67,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 4 - Testing request with duplicate region in region parameter", async function () {
+    it("Fail 5 - Testing request with duplicate region in region parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { regions: ["NL", "NL"] },
       }).then((res) => {
@@ -79,7 +79,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 5 - Testing request with duplicate sector in sector parameter", async function () {
+    it("Fail 6 - Testing request with duplicate sector in sector parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { sectors: ["Manufacturing", "Manufacturing"] },
       }).then((res) => {
@@ -91,7 +91,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 5 - Testing timeseries request without filters parameter", async function () {
+    it("Fail 7 - Testing timeseries request without filters parameter", async function () {
       return postRequest("/stats/timeseries", {}).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
         assert.strictEqual(Object.keys(res.data.err).length, 1);
@@ -101,7 +101,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 6 - Testing timeseries request without filters.regions parameter", async function () {
+    it("Fail 8 - Testing timeseries request without filters.regions parameter", async function () {
       return postRequest("/stats/timeseries", { filters: {} }).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
         assert.strictEqual(Object.keys(res.data.err).length, 1);

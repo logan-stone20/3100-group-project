@@ -8,6 +8,9 @@ var db;
 async function loadDBClient() {
   try {
     db = await mongo.connectToDB();
+    console.log(
+      await Pollution.getTotalsByGrouping(db, { yearStart: 2010 }, ["Region"])
+    );
   } catch (err) {
     console.log(err);
     throw new Error("Could not connect to the Mongo DB");

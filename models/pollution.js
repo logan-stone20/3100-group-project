@@ -75,11 +75,9 @@ class Pollution {
           match.$match.Year = {};
           if (yearStart) {
             match.$match.Year.$gte = yearStart;
-            delete filters.yearStart;
           }
           if (yearEnd) {
             match.$match.Year.$lte = yearEnd;
-            delete filters.yearEnd;
           }
         }
 
@@ -95,9 +93,9 @@ class Pollution {
           $group: {},
         };
 
-        group.$group._id = {};
+        group.$group._id = groupedByList ? {} : null;
 
-        groupedByList.forEach((column) => {
+        groupedByList?.forEach((column) => {
           group.$group._id[column] = groupedByToMongo[column];
         });
 
@@ -120,7 +118,7 @@ class Pollution {
 
         // setting _id to null will get us an object totals over all years/regions
         // grand total is already included in the source query
-        if (!groupedByList.includes("Sector")) {
+        if (!groupedByList?.includes("Sector")) {
           group.$group._id = null;
           const totals = await collection
             .aggregate([match, group, sort])

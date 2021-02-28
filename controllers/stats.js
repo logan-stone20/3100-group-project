@@ -12,7 +12,6 @@ const formatValidationError = (validationInstance) => {
     const property = err.property.replace("instance.", "");
     errObj.err[property] = err.message;
   });
-  console.log(errObj);
   return errObj;
 };
 
@@ -33,8 +32,6 @@ const pie = async (req, res) => {
 
 const bar = async (req, res) => {
   const validatorRes = validator.validate(req.body, barRequestSchema);
-  console.log(validatorRes);
-  console.log(validatorRes.valid);
   if (!validatorRes.valid) {
     res.send(formatValidationError(validatorRes));
     return;
@@ -46,7 +43,6 @@ const bar = async (req, res) => {
     const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
     res.send({ result: result });
   } catch (err) {
-    console.log(err);
     res.send("There was an error  (err:" + err + ")");
   }
 };
