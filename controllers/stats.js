@@ -85,7 +85,7 @@ const bar = async (req, res) => {
 };
 
 /*
-  For this one I was thinking maybe perform two queries,
+  For this one I was thinking maybe perform multiple queries,
   one for each province over the given time frame.
 */
 const timeseries = async (req, res) => {
