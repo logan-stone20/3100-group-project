@@ -19,7 +19,7 @@ const groupedByToMongo = {
 
 class Pollution {
   constructor(
-    province,
+    region,
     year,
     source,
     TPM,
