@@ -40,11 +40,11 @@ after(async function () {
 describe("Testing the Pollution Stats API", async function () {
   describe("Testing pollution queries - Simple cases", function () {
     it("Success 1 - Test get all toxins totals by region query with no filters", async function () {
-      const stats = await Pollution.getTotalsByGrouping(db, {}, "region");
+      const stats = await Pollution.getTotalsByGrouping(db, {}, ["Region"]);
 
       provinces.forEach((province) =>
         assert.notStrictEqual(
-          stats.find((stat) => stat._id == province),
+          stats.find((stat) => stat._id.Region == province),
           undefined
         )
       );
@@ -54,9 +54,9 @@ describe("Testing the Pollution Stats API", async function () {
       assert.strictEqual(stats.filter((stat) => stat._id == null).length, 1);
     });
     it("Success 2 - Test get all toxins totals by year query", async function () {
-      const stats = await Pollution.getTotalsByGrouping(db, {}, "year");
-      assert.strictEqual(stats[0]._id, 1990);
-      assert.strictEqual(stats[stats.length - 2]._id, 2018);
+      const stats = await Pollution.getTotalsByGrouping(db, {}, ["Year"]);
+      assert.strictEqual(stats[0]._id.Year, 1990);
+      assert.strictEqual(stats[stats.length - 2]._id.Year, 2018);
 
       // Make sure totals over all years is included
       assert.strictEqual(stats[stats.length - 1]._id, null);
@@ -65,15 +65,15 @@ describe("Testing the Pollution Stats API", async function () {
       const stats = await Pollution.getTotalsByGrouping(
         db,
         { yearStart: 2000 },
-        "year"
+        ["Year"]
       );
-      assert.strictEqual(stats[0]._id, 2000);
-      assert.strictEqual(stats[stats.length - 2]._id, 2018);
+      assert.strictEqual(stats[0]._id.Year, 2000);
+      assert.strictEqual(stats[stats.length - 2]._id.Year, 2018);
 
       let year = 2000;
       while (year <= 2018) {
         assert.notStrictEqual(
-          stats.find((stat) => stat._id === year),
+          stats.find((stat) => stat._id.Year === year),
           undefined
         );
         year++;
@@ -83,16 +83,14 @@ describe("Testing the Pollution Stats API", async function () {
       assert.strictEqual(stats[stats.length - 1]._id, null);
     });
     it("Success 4 - Test get all toxins totals by year query with upper bound on year", async function () {
-      const stats = await Pollution.getTotalsByGrouping(
-        db,
-        { yearEnd: 2000 },
-        "year"
-      );
+      const stats = await Pollution.getTotalsByGrouping(db, { yearEnd: 2000 }, [
+        "Year",
+      ]);
 
       let year = 2000;
       while (year >= 1990) {
         assert.notStrictEqual(
-          stats.find((stat) => stat._id === year),
+          stats.find((stat) => stat._id.Year === year),
           undefined
         );
         year--;
@@ -109,7 +107,7 @@ describe("Testing the Pollution Stats API", async function () {
       const stats = await Pollution.getTotalsByGrouping(
         db,
         { yearStart: 1997, yearEnd: 2010 },
-        "year"
+        ["Year"]
       );
 
       assert.strictEqual(13, stats.length - 2);
@@ -117,7 +115,7 @@ describe("Testing the Pollution Stats API", async function () {
       let year = 2010;
       while (year >= 1997) {
         assert.notStrictEqual(
-          stats.find((stat) => stat._id === year),
+          stats.find((stat) => stat._id.Year === year),
           undefined
         );
         year--;
@@ -127,14 +125,47 @@ describe("Testing the Pollution Stats API", async function () {
       assert.strictEqual(stats[stats.length - 1]._id, null);
     });
     it("Success 6 - Test get all toxins totals by source query with no filters", async function () {
-      const stats = await Pollution.getTotalsByGrouping(db, {}, "source");
+      const stats = await Pollution.getTotalsByGrouping(db, {}, ["Source"]);
 
       sources.forEach((source) => {
         assert.notStrictEqual(
-          stats.find((stat) => stat._id === source),
+          stats.find((stat) => stat._id.Source === source),
           undefined
         );
       });
+    });
+    it("Success 6 - Test get all toxins totals grouped by source and province query with no filters", async function () {
+      const stats = await Pollution.getTotalsByGrouping(db, {}, [
+        "Region",
+        "Source",
+      ]);
+
+      provinces.forEach((province) => {
+        sources.forEach((source) => {
+          assert.notStrictEqual(
+            stats.find(
+              (stat) =>
+                stat._id.Region === province && stat._id.Source === source
+            ),
+            undefined
+          );
+        });
+        assert.notStrictEqual(
+          stats.find(
+            (stat) =>
+              stat._id.Region === province && stat._id.Source === "GRAND TOTAL"
+          ),
+          undefined
+        );
+      });
+    });
+  });
+  describe("Testing pollution API requests - Simple cases", async function () {
+    it("Testing getting bar graph data", async function () {
+      return postRequest("/stats/bar", {
+        filters: { yee: "y" },
+        groupedBy: ["Region"],
+      }).then((res) => {});
     });
   });
 });

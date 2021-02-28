@@ -12,9 +12,9 @@ async function _get_pollution_stats_collection(db) {
 }
 
 const groupedByToMongo = {
-  year: "$Year",
-  region: "$Region",
-  source: "$Source",
+  Year: "$Year",
+  Region: "$Region",
+  Source: "$Source",
 };
 
 class Pollution {
@@ -61,7 +61,7 @@ class Pollution {
   // groupedBy is gonna have to become a list to become a list
   // since we want to have multi level pie charts with provinces and
   // their sectors
-  static async getTotalsByGrouping(db, filters, groupedBy) {
+  static async getTotalsByGrouping(db, filters, groupedByList) {
     return new Promise(async function (resolve, reject) {
       try {
         const yearStart = filters.yearStart;
@@ -83,8 +83,8 @@ class Pollution {
           }
         }
 
-        if (filters.provinces) {
-          match.$match.Region = { $in: filters.provinces };
+        if (filters.regions) {
+          match.$match.Region = { $in: filters.regions };
         }
 
         if (filters.sectors) {
@@ -95,7 +95,11 @@ class Pollution {
           $group: {},
         };
 
-        group.$group._id = groupedByToMongo[groupedBy];
+        group.$group._id = {};
+
+        groupedByList.forEach((column) => {
+          group.$group._id[column] = groupedByToMongo[column];
+        });
 
         if (filters.toxins) {
           filters.toxins.forEach((key) => {
@@ -116,7 +120,7 @@ class Pollution {
 
         // setting _id to null will get us an object totals over all years/regions
         // grand total is already included in the source query
-        if (groupedBy !== "source") {
+        if (!groupedByList.includes("Sector")) {
           group.$group._id = null;
           const totals = await collection
             .aggregate([match, group, sort])

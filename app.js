@@ -8,14 +8,6 @@ var db;
 async function loadDBClient() {
   try {
     db = await mongo.connectToDB();
-    console.log(
-      await Pollution.getFilteredSearchByProvince(db, {
-        yearStart: 1994,
-        yearEnd: 2001,
-        provinces: ["NL", "NS"],
-        toxins: ["NOX", "SOX", "Pb", "VOC"],
-      })
-    );
   } catch (err) {
     console.log(err);
     throw new Error("Could not connect to the Mongo DB");
