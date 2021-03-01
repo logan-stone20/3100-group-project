@@ -61,8 +61,8 @@ const timeseries = async (req, res) => {
   const filters = req.body.filters;
   try {
     const result = {}
-    filters.regions.forEach((region) => {
-      const filterForSingleProvince = {...req.body.filters, regions: [region]}
+    filters.regions.forEach(async (region) => {
+      const filterForSingleProvince = {...req.body.filters, regions: [region]};
       result[region] = await Pollution.getTotalsByGrouping(db, filterForSingleProvince, ["year"]);
     })
     res.send({ result: result });
