@@ -1,14 +1,8 @@
-const Validator = require("validatorjs");
-const client = require("../utils/db.js");
-const { columnToMongo, pollution, toxins } = require("../utils/consts.js");
+const { columnToMongo, toxins } = require("../utils/consts.js");
 
 async function _get_pollution_stats_collection(db) {
-  try {
-    const collection = await db.collection("pollution");
-    return collection;
-  } catch (err) {
-    throw err;
-  }
+  const collection = await db.collection("pollution");
+  return collection;
 }
 
 const groupedByToMongo = {
@@ -57,10 +51,6 @@ class Pollution {
      _id field that is equal to the province code. There is an entry that
      has _id = null which specifies totals across all provinces. 
   */
-
-  // groupedBy is gonna have to become a list to become a list
-  // since we want to have multi level pie charts with provinces and
-  // their sources
   static async getTotalsByGrouping(db, filters, groupedByList) {
     return new Promise(async function (resolve, reject) {
       try {
@@ -71,6 +61,8 @@ class Pollution {
           $match: {},
         };
 
+        // the following will construct an array of [match, group, sort] objects
+        // which are required for the mongodb aggregate() function
         if (yearStart || yearEnd) {
           match.$match.Year = {};
           if (yearStart) {
@@ -104,6 +96,7 @@ class Pollution {
             group.$group[key] = { $sum: columnToMongo[key] };
           });
         } else {
+          // get all toxins if none are specified in filters
           toxins.forEach((key) => {
             group.$group[key] = { $sum: columnToMongo[key] };
           });

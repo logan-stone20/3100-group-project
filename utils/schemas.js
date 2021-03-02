@@ -29,6 +29,7 @@ const filterSchema = {
       uniqueItems: true,
     },
   },
+  additionalProperties: false,
 };
 
 const barRequestSchema = {
@@ -45,14 +46,34 @@ const barRequestSchema = {
       },
     },
   },
+  additionalProperties: false,
+};
+
+const heatmapFilterSchema = {
+  id: "/heatmapFilterSchema",
+  type: "object",
+  properties: {
+    yearStart: { type: "integer" },
+    yearEnd: { type: "integer" },
+    sources: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: sources,
+      },
+      uniqueItems: true,
+    },
+  },
+  additionalProperties: false,
 };
 
 const heatmapRequestSchema = {
   id: "/heatmapRequestSchema",
   type: "object",
   properties: {
-    filters: { $ref: "/filterSchema" },
+    filters: { $ref: "/heatmapFilterSchema" },
   },
+  additionalProperties: false,
 };
 
 const timeSeriesFilterSchema = {
@@ -79,6 +100,7 @@ const timeSeriesFilterSchema = {
     },
   },
   required: ["regions"],
+  additionalProperties: false,
 };
 
 const timeSeriesRequestSchema = {
@@ -88,9 +110,28 @@ const timeSeriesRequestSchema = {
     filters: { $ref: "/timeSeriesFilterSchema" },
   },
   required: ["filters"],
+  additionalProperties: false,
+};
+
+const pieRequestSchema = {
+  id: "/pieRequestSchema",
+  type: "object",
+  properties: {
+    filters: { $ref: "/filterSchema" },
+    groupedBy: {
+      type: "array",
+      uniqueItems: true,
+      items: {
+        type: "string",
+        enum: ["Region", "Source", "Year"],
+      },
+    },
+  },
+  additionalProperties: false,
 };
 
 validator.addSchema(filterSchema, "/filterSchema");
+validator.addSchema(heatmapFilterSchema, "/heatmapFilterSchema");
 validator.addSchema(timeSeriesFilterSchema, "/timeSeriesFilterSchema");
 
 module.exports = {
@@ -98,4 +139,5 @@ module.exports = {
   barRequestSchema,
   heatmapRequestSchema,
   timeSeriesRequestSchema,
+  pieRequestSchema,
 };
