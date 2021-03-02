@@ -1,15 +1,10 @@
 const assert = require("assert");
-const Pollution = require("../models/pollution");
 const axios = require("axios");
-const mongo = require("../utils/db");
-const { provinces, toxins, sources } = require("../utils/consts");
+const { provinces, sources } = require("../utils/consts");
 
 const url = "http://localhost:3000";
 
-const getRequest = (path) => axios.get(url + path);
 const postRequest = (path, data) => axios.post(url + path, data);
-const deleteRequest = (path) => axios.delete(url + path);
-const putRequest = (path, data) => axios.put(url + path, data);
 
 describe("Testing pollution API requests with valid schemas", async function () {
   describe("Testing /stats/bar requests", async function () {
@@ -19,12 +14,46 @@ describe("Testing pollution API requests with valid schemas", async function () 
         groupedBy: ["Region"],
       }).then((res) => {
         assert.notStrictEqual(res.data.result, undefined);
+
+        // check for presence of each region in result
         provinces.forEach((province) =>
           assert.notStrictEqual(
             res.data.result.find((stat) => stat._id?.Region === province),
             undefined
           )
         );
+      });
+    });
+    it("Success 2 - Sending request to /stats/pie with year range and grouped by Region and Source", async function () {
+      return postRequest("/stats/pie", {
+        filters: {},
+        groupedBy: ["Region", "Source"],
+      }).then((res) => {
+        assert.strictEqual(res.data.err, undefined);
+
+        // make sure that data is grouped on region and source
+        assert.strictEqual(
+          provinces.includes(res.data.result[0]._id.Region),
+          true
+        );
+        assert.strictEqual(
+          sources.includes(res.data.result[0]._id.Source),
+          true
+        );
+      });
+    });
+    it("Success 3 - Sending request to /stats/heatmap with year range", async function () {
+      return postRequest("/stats/heatmap", {
+        filters: { yearStart: 2001, yearEnd: 2010 },
+      }).then((res) => {
+        assert.strictEqual(res.data.err, undefined);
+
+        // ensure that data is only grouped on region
+        assert.strictEqual(
+          provinces.includes(res.data.result[0]._id.Region),
+          true
+        );
+        assert.strictEqual(Object.keys(res.data.result[0]._id).length, 1);
       });
     });
   });

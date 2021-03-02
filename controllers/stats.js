@@ -4,6 +4,7 @@ const {
   barRequestSchema,
   heatmapRequestSchema,
   timeSeriesRequestSchema,
+  pieRequestSchema,
 } = require("../utils/schemas");
 
 const formatValidationError = (validationInstance) => {
@@ -16,15 +17,17 @@ const formatValidationError = (validationInstance) => {
 };
 
 const pie = async (req, res) => {
-  const validatorRes = validator.validate(req.body, requestSchema);
+  const validatorRes = validator.validate(req.body, pieRequestSchema);
   if (!validatorRes.valid) {
     res.send(formatValidationError(validatorRes));
     return;
   }
   let db = req.db;
   try {
-    const result = await Pollution.getPieData(db, req);
-    res.send(result);
+    const filters = req.body.filters;
+    const groupedBy = req.body.groupedBy;
+    const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
+    res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
   }
@@ -47,10 +50,6 @@ const bar = async (req, res) => {
   }
 };
 
-/*
-  For this one I was thinking maybe perform multiple queries,
-  one for each province over the given time frame.
-*/
 const timeseries = async (req, res) => {
   const validatorRes = validator.validate(req.body, timeSeriesRequestSchema);
   if (!validatorRes.valid) {
@@ -60,23 +59,41 @@ const timeseries = async (req, res) => {
   let db = req.db;
   const filters = req.body.filters;
   try {
-    const result = {}
+    const result = {};
+
+    // Query for toxin totals by year for each region
     filters.regions.forEach(async (region) => {
-      const filterForSingleProvince = {...req.body.filters, regions: [region]};
-      result[region] = await Pollution.getTotalsByGrouping(db, filterForSingleProvince, ["year"]);
-    })
+      const filterForSingleProvince = {
+        ...req.body.filters,
+        regions: [region],
+      };
+      result[region] = await Pollution.getTotalsByGrouping(
+        db,
+        filterForSingleProvince,
+        ["year"]
+      );
+    });
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
   }
 };
 
-// Pretty sure heat map can just use the same info as the bar function
 const heatmap = async (req, res) => {
   const validatorRes = validator.validate(req.body, heatmapRequestSchema);
   if (!validatorRes.valid) {
     res.send(formatValidationError(validatorRes));
     return;
+  }
+  let db = req.db;
+  try {
+    const filters = req.body.filters;
+
+    // Only group by region for the heatmap query.
+    const result = await Pollution.getTotalsByGrouping(db, filters, ["Region"]);
+    res.send({ result: result });
+  } catch (err) {
+    res.send("There was an error  (err:" + err + ")");
   }
 };
 
