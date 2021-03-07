@@ -88,6 +88,7 @@ const timeSeriesFilterSchema = {
         type: "string",
         enum: provinces,
       },
+      minItems: 1,
       uniqueItems: true,
     },
     sources: {

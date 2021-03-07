@@ -109,17 +109,6 @@ class Pollution {
           .aggregate([match, group, sort])
           .toArray();
 
-        // setting _id to null will get us an object totals over all years/regions
-        // grand total is already included in the source query
-        if (!groupedByList?.includes("Sector")) {
-          group.$group._id = null;
-          const totals = await collection
-            .aggregate([match, group, sort])
-            .toArray();
-
-          result.push(totals[0]);
-        }
-
         resolve(result);
       } catch (err) {
         reject(
