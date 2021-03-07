@@ -1,18 +1,13 @@
 const assert = require("assert");
-const Pollution = require("../models/pollution");
 const axios = require("axios");
-const mongo = require("../utils/db");
 
 const url = "http://localhost:3000";
 
-const getRequest = (path) => axios.get(url + path);
 const postRequest = (path, data) => axios.post(url + path, data);
-const deleteRequest = (path) => axios.delete(url + path);
-const putRequest = (path, data) => axios.put(url + path, data);
 
-describe("Testing pollution API requests schema validation", async function () {
-  describe("Testing /stats requests with invalid filters", async function () {
-    it("Fail 1 - Testing request with yearEnd and yearStart not integers", async function () {
+describe("Testing pollution API requests schema validation failures", async function () {
+  describe("Testing /stats/bar requests with invalid filters", async function () {
+    it("Fail 1 - Testing /stats/bar with yearEnd and yearStart not integers", async function () {
       return postRequest("/stats/bar", {
         filters: { yearEnd: "s", yearStart: "x" },
         groupedBy: ["Region"],
@@ -29,7 +24,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 2 - Testing request with invalid region filter parameter", async function () {
+    it("Fail 2 - Testing /stats/bar with invalid region filter parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { regions: ["notInCanada"] },
         groupedBy: ["Region"],
@@ -41,7 +36,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 3 - Testing request with invalid sector in sources filter parameter", async function () {
+    it("Fail 3 - Testing /stats/bar with invalid sector in sources filter parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { sources: ["notASector"] },
         groupedBy: ["Region"],
@@ -55,7 +50,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 4 - Testing request with invalid grouped by parameter", async function () {
+    it("Fail 4 - Testing /stats/bar with invalid grouped by parameter", async function () {
       return postRequest("/stats/bar", {
         groupedBy: ["invalidValue"],
       }).then((res) => {
@@ -67,7 +62,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 5 - Testing request with duplicate region in region parameter", async function () {
+    it("Fail 5 - Testing /stats/bar with duplicate region in region parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { regions: ["NL", "NL"] },
       }).then((res) => {
@@ -79,7 +74,7 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 6 - Testing request with duplicate sector in sector parameter", async function () {
+    it("Fail 6 - Testing /stats/bar with duplicate sector in sector parameter", async function () {
       return postRequest("/stats/bar", {
         filters: { sources: ["Manufacturing", "Manufacturing"] },
       }).then((res) => {
@@ -91,21 +86,113 @@ describe("Testing pollution API requests schema validation", async function () {
         );
       });
     });
-    it("Fail 7 - Testing timeseries request without filters parameter", async function () {
+    it("Fail 7 - Testing /stats/bar with unexpected parameter", async function () {
+      return postRequest("/stats/bar", {
+        filters: { comp3100: "web programs" },
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.filters,
+          'is not allowed to have the additional property "comp3100"'
+        );
+      });
+    });
+  });
+  describe("Testing /stats/timeseries requests with invalid filters", async function () {
+    it("Fail 1 - Testing /stats/timeseries request with unexpected parameter", async function () {
+      return postRequest("/stats/timeseries", {
+        filters: { test: "test" },
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.filters,
+          'is not allowed to have the additional property "test"'
+        );
+      });
+    });
+    it("Fail 2 - Testing /stats/timeseries request with no filters field", async function () {
       return postRequest("/stats/timeseries", {}).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
-        assert.strictEqual(Object.keys(res.data.err).length, 1);
         assert.strictEqual(
           res.data.err.instance,
           'requires property "filters"'
         );
       });
     });
-    it("Fail 8 - Testing timeseries request without filters.regions parameter", async function () {
+    it("Fail 3 - Testing /stats/timeseries request with no region field", async function () {
       return postRequest("/stats/timeseries", { filters: {} }).then((res) => {
         assert.notStrictEqual(res.data.err, undefined);
-        assert.strictEqual(Object.keys(res.data.err).length, 1);
         assert.strictEqual(res.data.err.filters, 'requires property "regions"');
+      });
+    });
+    it("Fail 4 - Testing /stats/timeseries request with empty region array", async function () {
+      return postRequest("/stats/timeseries", {
+        filters: { regions: [] },
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err["filters.regions"],
+          "does not meet minimum length of 1"
+        );
+      });
+    });
+    it("Fail 5 - Testing /stats/timeseries request with groupedBy value (not permitted on this endpoint)", async function () {
+      return postRequest("/stats/timeseries", {
+        groupedBy: ["Year"],
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.instance,
+          'is not allowed to have the additional property "groupedBy"'
+        );
+      });
+    });
+  });
+  describe("Testing /stats/pie requests with invalid filters", async function () {
+    it("Fail 1 - Testing /stats/pie request with unexpected parameter", async function () {
+      return postRequest("/stats/pie", {
+        filters: { test: "test" },
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.filters,
+          'is not allowed to have the additional property "test"'
+        );
+      });
+    });
+    it("Fail 2 - Testing /stats/pie request with unexped groupedBy value", async function () {
+      return postRequest("/stats/pie", {
+        groupedBy: ["Source", "Source2"],
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err["groupedBy[1]"],
+          "is not one of enum values: Region,Source,Year"
+        );
+      });
+    });
+  });
+  describe("Testing /stats/heatmap requests with invalid filters", async function () {
+    it("Fail 1 - Testing /stats/heatmap request with unexpected parameter", async function () {
+      return postRequest("/stats/heatmap", {
+        filters: { test: "test" },
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.filters,
+          'is not allowed to have the additional property "test"'
+        );
+      });
+    });
+    it("Fail 2 - Testing /stats/timeseries request with groupedBy value (not permitted on this endpoint)", async function () {
+      return postRequest("/stats/timeseries", {
+        groupedBy: ["Year"],
+      }).then((res) => {
+        assert.notStrictEqual(res.data.err, undefined);
+        assert.strictEqual(
+          res.data.err.instance,
+          'is not allowed to have the additional property "groupedBy"'
+        );
       });
     });
   });

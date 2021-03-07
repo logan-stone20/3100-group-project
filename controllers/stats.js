@@ -62,7 +62,9 @@ const timeseries = async (req, res) => {
     const result = {};
 
     // Query for toxin totals by year for each region
-    filters.regions.forEach(async (region) => {
+    let index = 0;
+    while (index < filters.regions.length) {
+      const region = filters.regions[index];
       const filterForSingleProvince = {
         ...req.body.filters,
         regions: [region],
@@ -70,9 +72,10 @@ const timeseries = async (req, res) => {
       result[region] = await Pollution.getTotalsByGrouping(
         db,
         filterForSingleProvince,
-        ["year"]
+        ["Year"]
       );
-    });
+      index++;
+    }
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
