@@ -134,8 +134,8 @@ describe("Testing the Pollution Stats API", async function () {
         year--;
       }
 
-      // there should be 10 years in the results since data starts at 1990
-      assert.strictEqual(10, stats.length - 1);
+      // there should be 11 years in the results since data starts at 1990 (yearEnd is inclusive)
+      assert.strictEqual(11, stats.length);
       toxins.forEach((toxin) =>
         assert.notStrictEqual(stats[0][toxin], undefined)
       );
