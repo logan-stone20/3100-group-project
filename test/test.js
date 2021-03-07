@@ -1,9 +1,7 @@
 const assert = require("assert");
 const Pollution = require("../models/pollution");
-const axios = require("axios");
 const mongo = require("../utils/db");
 const { provinces, toxins, sources } = require("../utils/consts");
-const { notStrictEqual } = require("assert");
 
 let db;
 before(async function () {
