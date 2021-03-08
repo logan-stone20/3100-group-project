@@ -1,5 +1,5 @@
 const Validator = require("jsonschema").Validator;
-const { provinces, sources } = require("../utils/consts");
+const { provinces, sources, toxins } = require("../utils/consts");
 
 const validator = new Validator();
 
@@ -12,6 +12,14 @@ const filterSchema = {
   properties: {
     yearStart: { type: "integer" },
     yearEnd: { type: "integer" },
+    toxins: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: toxins,
+      },
+      uniqueItems: true,
+    },
     regions: {
       type: "array",
       items: {
@@ -53,6 +61,14 @@ const heatmapFilterSchema = {
   id: "/heatmapFilterSchema",
   type: "object",
   properties: {
+    toxins: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: toxins,
+      },
+      uniqueItems: true,
+    },
     yearStart: { type: "integer" },
     yearEnd: { type: "integer" },
     sources: {
@@ -80,6 +96,14 @@ const timeSeriesFilterSchema = {
   id: "/timeSeriesFilterSchema",
   type: "object",
   properties: {
+    toxins: {
+      type: "array",
+      items: {
+        type: "string",
+        enum: toxins,
+      },
+      uniqueItems: true,
+    },
     yearStart: { type: "integer" },
     yearEnd: { type: "integer" },
     regions: {
