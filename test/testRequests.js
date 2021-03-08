@@ -1,3 +1,9 @@
+/*
+  All tests return an axios request promise.
+  Mocha supports returning of promises.
+  https://stackoverflow.com/questions/26571328/how-do-i-properly-test-promises-with-mocha-and-chai
+*/
+
 const assert = require("assert");
 const axios = require("axios");
 const { provinces, sources } = require("../utils/consts");

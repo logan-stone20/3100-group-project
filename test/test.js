@@ -1,3 +1,7 @@
+/*
+  This file tests model functions we have written in models/pollution.js
+*/
+
 const assert = require("assert");
 const Pollution = require("../models/pollution");
 const mongo = require("../utils/db");
@@ -25,12 +29,15 @@ describe("Testing the Pollution Stats API", async function () {
     it("Success 1 - Test get all toxins totals by region with no filters for all years and regions", async function () {
       const stats = await Pollution.getTotalsByGrouping(db, {}, ["Region"]);
 
+      // Make sure all regions are present in result.
       provinces.forEach((province) =>
         assert.notStrictEqual(
           stats.find((stat) => stat._id.Region == province),
           undefined
         )
       );
+
+      // Make sure all toxins are present in result.
       toxins.forEach((toxin) =>
         assert.notStrictEqual(stats[0][toxin], undefined)
       );
@@ -168,6 +175,7 @@ describe("Testing the Pollution Stats API", async function () {
 
       assert.strictEqual(13, stats.length - 1);
 
+      // Make sure proper years are present in result
       let year = 2010;
       while (year >= 1997) {
         assert.notStrictEqual(
@@ -210,6 +218,7 @@ describe("Testing the Pollution Stats API", async function () {
         ["Region"]
       );
 
+      // make sure only filtered provinces are present
       assert.strictEqual(stats.length, 2);
       filteredProvinces.forEach((province) => {
         assert.notStrictEqual(
@@ -234,6 +243,7 @@ describe("Testing the Pollution Stats API", async function () {
         ["Source"]
       );
 
+      // make sure only filtered sources are present
       assert.strictEqual(stats.length, 2);
       filteredSources.forEach((source) => {
         assert.notStrictEqual(

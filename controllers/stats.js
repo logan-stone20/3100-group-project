@@ -16,6 +16,12 @@ const formatValidationError = (validationInstance) => {
   return errObj;
 };
 
+const outputLogForRequest = (path, numberOfResults) => {
+  console.log(
+    `${path}: Request recieved. ${numberOfResults} results fetched from database.`
+  );
+};
+
 const pie = async (req, res) => {
   const validatorRes = validator.validate(req.body, pieRequestSchema);
   if (!validatorRes.valid) {
@@ -27,6 +33,7 @@ const pie = async (req, res) => {
     const filters = req.body.filters;
     const groupedBy = req.body.groupedBy;
     const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
+    outputLogForRequest("/stats/pie", result.length);
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
@@ -44,6 +51,7 @@ const bar = async (req, res) => {
   const groupedBy = req.body.groupedBy;
   try {
     const result = await Pollution.getTotalsByGrouping(db, filters, groupedBy);
+    outputLogForRequest("/stats/bar", result.length);
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
@@ -76,6 +84,7 @@ const timeseries = async (req, res) => {
       );
       index++;
     }
+    outputLogForRequest("/stats/timeseries", Object.keys(result).length);
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
@@ -94,6 +103,7 @@ const heatmap = async (req, res) => {
 
     // Only group by region for the heatmap query.
     const result = await Pollution.getTotalsByGrouping(db, filters, ["Region"]);
+    outputLogForRequest("/stats/heatmap", result.length);
     res.send({ result: result });
   } catch (err) {
     res.send("There was an error  (err:" + err + ")");
