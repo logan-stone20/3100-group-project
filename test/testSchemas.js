@@ -158,7 +158,6 @@ describe("Testing pollution API requests schema validation failures", async func
       });
     });
   });
-  });
   describe("Testing /stats/pie requests with invalid filters", async function () {
     it("Fail 1 - Testing /stats/pie request with unexpected parameter", async function () {
       return postRequest("/stats/pie", {
@@ -206,4 +205,5 @@ describe("Testing pollution API requests schema validation failures", async func
         );
       });
     });
+  });
 });
