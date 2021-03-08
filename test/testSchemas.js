@@ -170,7 +170,7 @@ describe("Testing pollution API requests schema validation failures", async func
         );
       });
     });
-    it("Fail 2 - Testing /stats/pie request with unexped groupedBy value", async function () {
+    it("Fail 2 - Testing /stats/pie request with unexpected groupedBy value", async function () {
       return postRequest("/stats/pie", {
         groupedBy: ["Source", "Source2"],
       }).then((res) => {

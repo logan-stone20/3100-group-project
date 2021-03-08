@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha ./test"
+    "test": "mocha",
+    "coverage": "nyc npm run test"
   },
   "author": "",
   "license": "ISC",
@@ -15,9 +16,11 @@
     "jsonschema": "^1.4.0",
     "mocha": "^8.3.0",
     "mongodb": "^3.6.4",
+    "nyc": "^15.1.0",
     "validator": "^13.5.2"
   },
   "dependencies": {
+    "eslint-plugin-mocha": "^8.1.0",
     "validatorjs": "^3.22.1"
   }
 }
