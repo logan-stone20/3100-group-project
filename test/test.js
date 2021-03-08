@@ -87,6 +87,39 @@ describe("Testing the Pollution Stats API", async function () {
         assert.notStrictEqual(stats[0][toxin], undefined)
       );
     });
+    it("Success 5 - Test creation of a valid pollution entry with parameter matching", async function () {
+      let region = "ON";
+      let year = 1994;
+      let source = "Ore and Mineral Industries";
+      let tpm = 66998.36036;
+      let pm10 = 33464.0134;
+      let pm25 = 20887.60176;
+      let sox = 313595.9671;
+      let nox = 41847.71466;
+      let voc = 8262.18732;
+      let co = 87620.08829;
+      let nh3 = 1240.049868;
+      let pb = 91399.34374;
+      let cd = 1749.546597;
+      let hg = 619.8704574;
+      let pah = 2.572273851;
+      let testPollution = new Pollution(region, year, source, tpm, pm10, pm25, sox, nox, voc, co, nh3, pb, cd, hg, pah);
+      assert.strictEqual(testPollution.region, "ON");
+      assert.strictEqual(testPollution.year, 1994);
+      assert.strictEqual(testPollution.source, "Ore and Mineral Industries");
+      assert.strictEqual(testPollution.TPM, 66998.36036);
+      assert.strictEqual(testPollution.PM10, 33464.0134);
+      assert.strictEqual(testPollution.PM25, 20887.60176);
+      assert.strictEqual(testPollution.SOX, 313595.9671);
+      assert.strictEqual(testPollution.NOX, 41847.71466);
+      assert.strictEqual(testPollution.VOC, 8262.18732);
+      assert.strictEqual(testPollution.CO, 87620.08829);
+      assert.strictEqual(testPollution.NH3, 1240.049868);
+      assert.strictEqual(testPollution.Pb, 91399.34374);
+      assert.strictEqual(testPollution.Cd, 1749.546597);
+      assert.strictEqual(testPollution.Hg, 619.8704574);
+      assert.strictEqual(testPollution.PAH, 2.572273851);
+    });
   });
   describe("Testing pollution queries - Simple cases - one filter applied", function () {
     it("Success 1 - Test get all toxins totals by region with no filters for all years and one region", async function () {

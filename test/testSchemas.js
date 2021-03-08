@@ -158,6 +158,7 @@ describe("Testing pollution API requests schema validation failures", async func
       });
     });
   });
+  });
   describe("Testing /stats/pie requests with invalid filters", async function () {
     it("Fail 1 - Testing /stats/pie request with unexpected parameter", async function () {
       return postRequest("/stats/pie", {
@@ -170,7 +171,7 @@ describe("Testing pollution API requests schema validation failures", async func
         );
       });
     });
-    it("Fail 2 - Testing /stats/pie request with unexped groupedBy value", async function () {
+    it("Fail 2 - Testing /stats/pie request with unexpected groupedBy value", async function () {
       return postRequest("/stats/pie", {
         groupedBy: ["Source", "Source2"],
       }).then((res) => {
@@ -205,5 +206,4 @@ describe("Testing pollution API requests schema validation failures", async func
         );
       });
     });
-  });
 });
