@@ -1,3 +1,13 @@
+/*
+  All tests in this section make requests to each endpoint 
+  with an improper request body. They make sure the
+  error message returned by the server is correct each time.
+
+  All tests return an axios request promise.
+  Mocha supports returning of promises.
+  https://stackoverflow.com/questions/26571328/how-do-i-properly-test-promises-with-mocha-and-chai
+*/
+
 const assert = require("assert");
 const axios = require("axios");
 

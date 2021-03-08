@@ -1,3 +1,9 @@
+/*
+  All tests return an axios request promise.
+  Mocha supports returning of promises.
+  https://stackoverflow.com/questions/26571328/how-do-i-properly-test-promises-with-mocha-and-chai
+*/
+
 const assert = require("assert");
 const axios = require("axios");
 const { provinces, sources } = require("../utils/consts");
@@ -40,6 +46,20 @@ describe("Testing pollution API requests with valid schemas", async function () 
           sources.includes(res.data.result[0]._id.Source),
           true
         );
+      });
+    });
+    it("Success 3 - Sending request to /stats/heatmap with year range", async function () {
+      return postRequest("/stats/heatmap", {
+        filters: { yearStart: 2001, yearEnd: 2010 },
+      }).then((res) => {
+        assert.strictEqual(res.data.err, undefined);
+
+        // ensure that data is only grouped on region
+        assert.strictEqual(
+          provinces.includes(res.data.result[0]._id.Region),
+          true
+        );
+        assert.strictEqual(Object.keys(res.data.result[0]._id).length, 1);
       });
     });
     it("Success 3 - Sending request to /stats/heatmap with year range", async function () {

@@ -85,6 +85,7 @@ class Pollution {
           $group: {},
         };
 
+        // create query group parameters if any are given
         group.$group._id = groupedByList ? {} : null;
 
         groupedByList?.forEach((column) => {
