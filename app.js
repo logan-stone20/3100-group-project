@@ -1,7 +1,7 @@
 const express = require("express");
 const stats_router = require("./routes/stats.js");
 const mongo = require("./utils/db.js");
-const port = 3000;
+const port = 3001;
 
 var db;
 async function loadDBClient() {

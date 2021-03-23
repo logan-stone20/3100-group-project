@@ -1,0 +1,22 @@
+.top-container {
+  height: 10rem;
+  width: 100%;
+  background-color: aqua;
+  display: flex;
+  justify-content: center;
+}
+
+.select {
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.provinces {
+  height: 5rem;
+}
+
+.red-text {
+  color: red;
+}
