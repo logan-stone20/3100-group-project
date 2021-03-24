@@ -1,11 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
+import Footer from "./components/Footer";
 import reportWebVitals from "./reportWebVitals";
+import Chart from "./components/DummyChart";
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
+    <Chart />
+    <Footer />
   </React.StrictMode>,
   document.getElementById("root")
 );
