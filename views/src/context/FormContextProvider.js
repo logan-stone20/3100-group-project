@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, createContext } from "react";
 
-export const FormContext = React.createContext();
+export const FormContext = createContext();
 
-export default FormContext;
-
-export const FormContextProvider = (props) => {
+const FormContextProvider = (props) => {
   const [regions, setRegions] = useState([]);
   const [yearStart, setYearStart] = useState(1994);
   const [yearEnd, setYearEnd] = useState(2018);
@@ -27,3 +25,5 @@ export const FormContextProvider = (props) => {
     </FormContext.Provider>
   );
 };
+
+export default FormContextProvider;
