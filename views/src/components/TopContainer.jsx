@@ -68,18 +68,6 @@ const TopContainer = () => {
     </div>
   );
 
-  useEffect(() => {
-    console.log(regions);
-  }, [regions]);
-
-  useEffect(() => {
-    console.log(yearStart, yearEnd);
-  }, [yearEnd, yearStart]);
-
-  useEffect(() => {
-    console.log(graphType);
-  }, [graphType]);
-
   const handleInputChange = (e) => {
     if (e.target.checked && !regions.includes(e.target.value)) {
       setRegions([...regions, e.target.value]);
@@ -120,7 +108,7 @@ const TopContainer = () => {
       <div className="province-container">
         <form onInput={handleInputChange}>
           {Object.keys(checkboxRegions).map((region) => (
-            <div className="province-option">
+            <div className="option">
               <input
                 type="checkbox"
                 value={region}
