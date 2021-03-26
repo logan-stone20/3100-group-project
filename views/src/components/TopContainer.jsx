@@ -53,7 +53,6 @@ const TopContainer = () => {
     setYearStart,
     yearEnd,
     setYearEnd,
-    graphType,
     setGraphType,
   } = useContext(FormContext);
 

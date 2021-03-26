@@ -9,7 +9,7 @@ export const FormContextProvider = (props) => {
   const [regions, setRegions] = useState([]);
   const [yearStart, setYearStart] = useState(1994);
   const [yearEnd, setYearEnd] = useState(2018);
-  const [graphType, setGraphType] = useState(null);
+  const [graphType, setGraphType] = useState("pie");
   const [pollutionTypes, setPollutionTypes] = useState([]);
   const [sources, setSources] = useState([]);
   const [groupedBy, setGroupedBy] = useState([]);
