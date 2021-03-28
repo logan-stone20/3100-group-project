@@ -13,11 +13,12 @@
 
 .title-bar {
   text-align: center;
-  background-color: beige;
+  background-color: #6788bc;
   display: flex;
   align-content: center;
   justify-content: center;
   flex-direction: column;
+  height: 2rem;
 }
 
 .slide-container {
@@ -39,14 +40,15 @@
   overflow-y: scroll;
 }
 
-.province-option label {
+.option label {
   margin-left: 1rem;
 }
 
-.province-option {
+.option {
   margin-top: 1rem;
+  display: flex;
 }
 
-.province-option input {
+.option input {
   border-radius: 1rem;
 }

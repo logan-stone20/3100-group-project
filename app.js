@@ -2,6 +2,7 @@ const express = require("express");
 const stats_router = require("./routes/stats.js");
 const mongo = require("./utils/db.js");
 const port = 3001;
+const cors = require("cors");
 
 var db;
 async function loadDBClient() {
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
+app.use(cors());
 
 app.use("/stats", stats_router);
 

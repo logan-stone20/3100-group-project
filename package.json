@@ -20,6 +20,7 @@
     "validator": "^13.5.2"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "eslint-plugin-mocha": "^8.1.0",
     "validatorjs": "^3.22.1"
   }

@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import HighCharts from "highcharts";
 import HighChartsReact from "highcharts-react-official";
-import { FormContext, FormContextProvider } from "../context/FormContextProvider";
+import { FormContext } from "../context/FormContextProvider";
+import "./ChartContainer.css";
 
-const Chart = () => {
+const ChartContainer = () => {
   const { regions, graphType} = useContext(FormContext);
   console.log(graphType);
   const options = {
@@ -18,8 +19,8 @@ const Chart = () => {
     ],
   }
 
-  return (<div>
+  return (<div className="high-chart-container">
     <HighChartsReact highcharts={HighCharts} options={options} />
   </div>);
 };
-export default Chart;
+export default ChartContainer;

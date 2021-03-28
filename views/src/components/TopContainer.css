@@ -1,7 +1,6 @@
 .top-container {
-  height: 10rem;
+  height: 20vh;
   width: 100%;
-  background-color: aqua;
   display: flex;
   justify-content: center;
 }
@@ -11,10 +10,7 @@
   height: 100%;
   width: 100%;
   display: flex;
-}
-
-.provinces {
-  height: 5rem;
+  flex-direction: column;
 }
 
 .red-text {
