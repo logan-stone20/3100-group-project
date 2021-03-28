@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FormContext } from "../context/FormContext";
+import { FormContext } from "../context/FormContextProvider";
 import "./SideContainer.css";
 import SelectionCard from "./SelectionCard";
 
