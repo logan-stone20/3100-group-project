@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export const FormContext = React.createContext();
@@ -13,39 +13,55 @@ export const FormContextProvider = (props) => {
   const [pollutionTypes, setPollutionTypes] = useState([]);
   const [sources, setSources] = useState([]);
   const [groupedBy, setGroupedBy] = useState([]);
+  const [data, setData] = useState(null);
+  const [shouldChartUpdate, setShouldChartUpdate] = useState(false);
+
+  useEffect(() => {
+    setShouldChartUpdate(false);
+  }, [
+    regions,
+    yearStart,
+    yearEnd,
+    graphType,
+    pollutionTypes,
+    sources,
+    groupedBy,
+  ]);
 
   const sendRequest = () => {
-    const data = {
+    const body = {
       filters: { yearStart: parseInt(yearStart), yearEnd: parseInt(yearEnd) },
     };
 
     if (regions.length > 0) {
-      data.filters.regions = regions;
+      body.filters.regions = regions;
     }
 
     if (sources.length > 0) {
-      data.filters.sources = sources;
+      body.filters.sources = sources;
     }
 
     if (pollutionTypes.length > 0) {
-      data.filters.toxins = pollutionTypes;
+      body.filters.toxins = pollutionTypes;
     }
 
     if (groupedBy.length > 0) {
-      data.groupedBy = groupedBy;
+      body.groupedBy = groupedBy;
     }
 
     axios
-      .post(`http://localhost:3001/stats/${graphType}`, data)
+      .post(`http://localhost:3001/stats/${graphType}`, body)
       .then((resp) => {
         if (resp?.data?.err) {
           alert(JSON.stringify(resp?.data?.err));
         } else {
-          console.log(resp);
+          setData(resp.data);
+          setShouldChartUpdate(true);
         }
       })
       .catch((error) => alert(error));
   };
+
   return (
     <FormContext.Provider
       value={{
@@ -64,6 +80,10 @@ export const FormContextProvider = (props) => {
         groupedBy,
         setGroupedBy,
         sendRequest,
+        setData,
+        data,
+        shouldChartUpdate,
+        setShouldChartUpdate,
       }}
     >
       {props.children}

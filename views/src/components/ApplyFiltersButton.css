@@ -1,0 +1,14 @@
+.apply-filters {
+  font-family: "Ubuntu", sans-serif;
+  width: 11rem;
+  height: 2rem;
+  border-radius: 1rem;
+  margin: 1rem auto;
+  background-color: #2171c2;
+  color: white;
+}
+
+.apply-filters:hover {
+  background-color: #043d76;
+  transition: 0.5s;
+}
