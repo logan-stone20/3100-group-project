@@ -28,15 +28,6 @@ const ChartContainer = () => {
       timeseries: {
         generate: () => {
           if (!data || !shouldChartUpdate) return;
-          if (chartRef?.current?.chart) {
-            chartRef.current.chart.update({
-              plotOptions: {
-                series: {
-                  pointStart: yearStart,
-                },
-              },
-            });
-          }
           let newOptions = {};
           newOptions = {
             title: {
@@ -47,13 +38,14 @@ const ChartContainer = () => {
               type: "line",
             },
             xAxis: {
-              categories: false,
+              categories: Object.values(data.result)[0].map(
+                (item) => item._id.Year
+              ),
               title: {
                 text: "Years",
               },
             },
             yAxis: {
-              categories: false,
               title: {
                 text: "Pollution in Tonnes (t)",
               },
@@ -96,13 +88,6 @@ const ChartContainer = () => {
           if (!data || !shouldChartUpdate) return;
           let newOptions = {};
 
-          // This prevents the x axis from containing years when going from time
-          // series to bar graph
-          if (chartRef?.current?.chart) {
-            chartRef.current.chart.update({
-              plotOptions: undefined,
-            });
-          }
           if (data.result.length === 1 && !data.result[0]?._id) {
             newOptions = {
               title: {
