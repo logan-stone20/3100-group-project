@@ -9,12 +9,13 @@ const App = () => {
   return (
     <FormContextProvider>
       <TopContainer />
-      <Chart />
       <div className="chart-sidebar-container">
-      <SideContainer />
+        <div className="highchart-container">
+          <Chart />
+        </div>
+        <SideContainer />
       </div>
     </FormContextProvider>
-
   );
 };
 

@@ -3,15 +3,14 @@
   height: 80vh;
   display: flex;
   flex-direction: column;
-  width: 27rem;
+  width: 20vw;
 }
 
 .sidebar-item-container {
   display: flex;
   flex-direction: column;
-  width: 16rem;
+  flex-grow: 1;
   background-color: white;
-  margin: auto;
   height: 9rem;
   overflow-y: scroll;
 }

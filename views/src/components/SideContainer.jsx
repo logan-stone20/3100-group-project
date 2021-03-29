@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FormContext } from "../context/FormContextProvider";
 import "./SideContainer.css";
 import SelectionCard from "./SelectionCard";
+import ApplyFiltersButton from "./ApplyFilterButton";
 
 const sourcesValues = [
   "Agriculture",
@@ -130,7 +131,7 @@ const SideContainer = () => {
     </div>
   );
 
-  const info = (
+  const group = (
     <div className="select">
       <div className="sidebar-item-container not-scrollable">
         <form onInput={handleGroupedByChange}>
@@ -148,6 +149,7 @@ const SideContainer = () => {
         </form>
       </div>
       <div className="grouped-by-alert">{groupedByText}</div>
+      <ApplyFiltersButton />
     </div>
   );
 
@@ -155,8 +157,7 @@ const SideContainer = () => {
     <div className="side-container">
       <SelectionCard children={pollutionTypeSelect} title="Pollution Types" />
       <SelectionCard children={sourceSelect} title="Pollution Sources" />
-      <SelectionCard children={info} title="Group Data" />
-      <button onClick={sendRequest}>Apply Filters</button>
+      <SelectionCard children={group} title="Group Data" />
     </div>
   );
 };
