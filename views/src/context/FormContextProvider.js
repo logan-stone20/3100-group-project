@@ -33,6 +33,34 @@ export const FormContextProvider = (props) => {
       filters: { yearStart: parseInt(yearStart), yearEnd: parseInt(yearEnd) },
     };
 
+    if (body.filters.yearEnd < body.filters.yearStart) {
+      alert(
+        "Please select an ending year that is greater than or equal to starting year"
+      );
+      return;
+    }
+
+    if (
+      graphType === "pie" &&
+      (groupedBy.length === 3 || groupedBy.length === 0)
+    ) {
+      alert("Pie graphs must be provided with 1-2 grouping selections.");
+      return;
+    }
+    if (graphType === "timeseries") {
+      if (regions.length === 0) {
+        alert(
+          "Timeseries graphs must be provided with at least one province selection."
+        );
+        return;
+      }
+
+      if (groupedBy.length > 0) {
+        alert("Timeseries graphs cannot accept grouping selections.");
+        return;
+      }
+    }
+
     if (regions.length > 0) {
       body.filters.regions = regions;
     }
