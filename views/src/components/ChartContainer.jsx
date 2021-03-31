@@ -1,8 +1,18 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import Highcharts from "highcharts";
+import mapModule from "highcharts/modules/map";
 import HighChartsReact from "highcharts-react-official";
+import canadaMapData from "../mapData";
+import themeModule from "highcharts/themes/high-contrast-dark";
 import { FormContext } from "../context/FormContextProvider";
+import exportModule from "highcharts/modules/exporting";
+
 import "./ChartContainer.css";
+
+// init highcharts modules
+mapModule(Highcharts);
+themeModule(Highcharts);
+exportModule(Highcharts);
 
 const allRegions = [
   "NL",
@@ -20,6 +30,10 @@ const allRegions = [
   "NU",
   "Unspecified",
 ];
+
+// some values are stored in the db in kilograms,
+// we use this array to decide if we need to convert to tonnes
+const kgKeys = ["Pb", "Hg", "Cd", "PAH"];
 
 const allSources = [
   "Agriculture",
@@ -95,12 +109,15 @@ const ChartContainer = () => {
             // for that year.
             years.forEach((year) => {
               regionData.push(
-                Object.keys(year).reduce((sum, key) => {
-                  if (key !== "_id") {
-                    sum += year[key];
-                  }
-                  return sum;
-                }, 0)
+                Object.keys(year)
+                  .filter((key) => key !== "_id")
+                  .reduce(
+                    (sum, toxin) =>
+                      kgKeys.includes(toxin)
+                        ? sum + year[toxin] / 1000
+                        : sum + year[toxin],
+                    0
+                  )
               );
             });
             entry.data = regionData;
@@ -111,9 +128,11 @@ const ChartContainer = () => {
             <HighChartsReact
               highcharts={Highcharts}
               ref={chartRef}
+              constructorType={"chart"}
+              immutable={true}
               options={newOptions}
               containerProps={{
-                style: { height: "78vh", width: "80vw", paddingTop: "1rem" },
+                style: { height: "80vh", width: "80vw" },
               }}
             />
           );
@@ -154,7 +173,11 @@ const ChartContainer = () => {
 
             const entry = {
               name: "Total",
-              data: toxins.map((toxin) => data.result[0][toxin]),
+              data: toxins.map((toxin) =>
+                kgKeys.includes(toxin)
+                  ? data.result[0][toxin] / 1000
+                  : data.result[0][toxin]
+              ),
               type: "bar",
             };
             newOptions.series = [entry];
@@ -163,9 +186,11 @@ const ChartContainer = () => {
               <HighChartsReact
                 highcharts={Highcharts}
                 ref={chartRef}
+                constructorType={"chart"}
                 options={newOptions}
+                immutable={true}
                 containerProps={{
-                  style: { height: "78vh", width: "80vw", paddingTop: "1rem" },
+                  style: { height: "80vh", width: "80vw" },
                 }}
               />
             );
@@ -205,7 +230,11 @@ const ChartContainer = () => {
             toxins.forEach((toxin) => {
               let toxinArray = [];
               data.result.forEach((grouping) => {
-                toxinArray.push(grouping[toxin]);
+                toxinArray.push(
+                  kgKeys.includes(toxin)
+                    ? grouping[toxin] / 1000
+                    : grouping[toxin]
+                );
               });
 
               newOptions.series.push({
@@ -218,9 +247,11 @@ const ChartContainer = () => {
               <HighChartsReact
                 highcharts={Highcharts}
                 ref={chartRef}
+                constructorType={"chart"}
                 options={newOptions}
+                immutable={true}
                 containerProps={{
-                  style: { height: "78vh", width: "80vw", paddingTop: "1rem" },
+                  style: { height: "80vh", width: "80vw" },
                 }}
               />
             );
@@ -270,9 +301,13 @@ const ChartContainer = () => {
               total +
               Object.keys(result)
                 .filter((key) => key !== "_id")
-                .reduce((total, toxin) => {
-                  return total + result[toxin];
-                }, 0),
+                .reduce(
+                  (total, toxin) =>
+                    kgKeys.includes(toxin)
+                      ? total + result[toxin] / 1000
+                      : total + result[toxin],
+                  0
+                ),
             0
           );
 
@@ -288,9 +323,13 @@ const ChartContainer = () => {
                 total +
                 Object.keys(value)
                   .filter((key) => key !== "_id")
-                  .reduce((total, toxin) => {
-                    return total + value[toxin];
-                  }, 0),
+                  .reduce(
+                    (total, toxin) =>
+                      kgKeys.includes(toxin)
+                        ? total + value[toxin] / 1000
+                        : total + value[toxin],
+                    0
+                  ),
               0
             );
 
@@ -305,9 +344,13 @@ const ChartContainer = () => {
                         total +
                         Object.keys(value)
                           .filter((key) => key !== "_id")
-                          .reduce((total, toxin) => {
-                            return total + value[toxin];
-                          }, 0),
+                          .reduce(
+                            (total, toxin) =>
+                              kgKeys.includes(toxin)
+                                ? total + value[toxin] / 1000
+                                : total + value[toxin],
+                            0
+                          ),
                       0
                     ) /
                     grandTotal) *
@@ -378,6 +421,7 @@ const ChartContainer = () => {
               size: "80%",
               innerSize: "60%",
               dataLabels: {
+                color: "#ffffff",
                 formatter: function () {
                   // display only if larger than 1
                   return this.y > 1
@@ -399,8 +443,90 @@ const ChartContainer = () => {
               highcharts={Highcharts}
               ref={chartRef}
               options={newOptions}
+              immutable={true}
+              constructorType={"chart"}
               containerProps={{
-                style: { height: "78vh", width: "80vw", paddingTop: "1rem" },
+                style: { height: "80vh", width: "80vw" },
+              }}
+            />
+          );
+        },
+      },
+      heatmap: {
+        generate: () => {
+          const serverRegionToMapRegion = {
+            AB: "ca-ab",
+            BC: "ca-bc",
+            MB: "ca-mb",
+            NB: "ca-nb",
+            NL: "ca-nl",
+            NS: "ca-ns",
+            NT: "ca-nt",
+            NU: "ca-nu",
+            ON: "ca-on",
+            PE: "ca-pe",
+            QC: "ca-qc",
+            SK: "ca-sk",
+            YT: "ca-yt",
+          };
+
+          if (!data || !shouldChartUpdate) return;
+          const formattedData = [];
+          data.result.forEach((result) => {
+            const mapCode = serverRegionToMapRegion[result._id.Region];
+            if (mapCode) {
+              formattedData.push([
+                mapCode,
+                Object.keys(result)
+                  .filter((key) => key !== "_id")
+                  .reduce(
+                    (sum, toxin) =>
+                      kgKeys.includes(toxin)
+                        ? sum + result[toxin] / 1000
+                        : sum + result[toxin],
+                    0
+                  ),
+              ]);
+            }
+          });
+          let newOptions = {};
+          newOptions = {
+            title: {
+              text: `Heatmap of Total Emissions from ${yearStart} - ${yearEnd}`,
+            },
+            colorAxis: {
+              min: 0,
+            },
+            tooltip: {
+              valueSuffix: " tonnes",
+            },
+            series: [
+              {
+                type: "map",
+                mapData: canadaMapData,
+                data: formattedData,
+                name: "Total Emissions",
+                states: {
+                  hover: {
+                    color: "#BADA54",
+                  },
+                },
+                dataLabels: {
+                  enabled: true,
+                  format: "{point.name}",
+                },
+              },
+            ],
+          };
+
+          setGraph(
+            <HighChartsReact
+              highcharts={Highcharts}
+              options={newOptions}
+              immutable={true}
+              constructorType={"mapChart"}
+              containerProps={{
+                style: { height: "80vh", width: "80vw" },
               }}
             />
           );
@@ -408,18 +534,17 @@ const ChartContainer = () => {
       },
     };
     if (shouldChartUpdate) {
-      if (chartRef?.current?.chart) {
-        chartRef.current.chart.xAxis[0]?.remove();
-        chartRef.current.chart.yAxis[0]?.remove();
-      }
       graphTypeMap[graphType]?.generate();
       setShouldChartUpdate(false);
     }
   }, [
     data,
     graphType,
+    groupedBy,
+    regions,
     setShouldChartUpdate,
     shouldChartUpdate,
+    sources,
     yearEnd,
     yearStart,
   ]);

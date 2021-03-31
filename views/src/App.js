@@ -4,18 +4,22 @@ import React from "react";
 import { FormContextProvider } from "./context/FormContextProvider";
 import "./App.css";
 import Chart from "./components/ChartContainer";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
-    <FormContextProvider>
-      <TopContainer />
-      <div className="chart-sidebar-container">
-        <div className="highchart-container">
-          <Chart />
+    <>
+      <FormContextProvider>
+        <TopContainer />
+        <div className="chart-sidebar-container">
+          <div className="highchart-container">
+            <Chart />
+          </div>
+          <SideContainer />
         </div>
-        <SideContainer />
-      </div>
-    </FormContextProvider>
+      </FormContextProvider>
+      <Footer />
+    </>
   );
 };
 
