@@ -126,7 +126,7 @@ const TopContainer = () => {
     <div className="top-container">
       <SelectionCard children={graphTypeChildren} title="Select a Graph type" />
       <SelectionCard children={yearSelect} title="Year Range" />
-      <SelectionCard children={provinceSelect} title="Provinces" />
+      <SelectionCard children={provinceSelect} title="Regions" />
     </div>
   );
 };

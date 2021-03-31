@@ -41,7 +41,6 @@ const SideContainer = () => {
     setPollutionTypes,
     sources,
     setSources,
-    sendRequest,
     groupedBy,
     setGroupedBy,
   } = useContext(FormContext);

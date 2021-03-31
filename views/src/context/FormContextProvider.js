@@ -60,6 +60,13 @@ export const FormContextProvider = (props) => {
         return;
       }
     }
+    if (
+      graphType === "heatmap" &&
+      (regions.length !== 0 || groupedBy.length !== 0)
+    ) {
+      alert("Heatmap cannot accept regions filters or grouping selections.");
+      return;
+    }
 
     if (regions.length > 0) {
       body.filters.regions = regions;

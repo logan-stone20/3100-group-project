@@ -20,4 +20,6 @@ body {
   height: 80vh;
   width: 80vw;
   display: flex;
+  background-color: #1f1f20;
+  box-sizing: border-box;
 }
