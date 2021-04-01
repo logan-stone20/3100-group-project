@@ -107,15 +107,21 @@ const TopContainer = () => {
       <div className="province-container">
         <form onInput={handleInputChange}>
           {Object.keys(checkboxRegions).map((region) => (
-            <div className="option">
-              <input
-                type="checkbox"
-                value={region}
-                id={`checkbox-${region}`}
-              ></input>
-              <label htmlFor={`checkbox-${region}`}>
-                {checkboxRegions[region].label}
-              </label>
+            <div
+              className={
+                regions.includes(region) ? "option selected" : "option"
+              }
+            >
+              <div className="checkbox-label-container">
+                <input
+                  type="checkbox"
+                  value={region}
+                  id={`checkbox-${region}`}
+                ></input>
+                <div className={`checkbox-label`}>
+                  {checkboxRegions[region].label}
+                </div>
+              </div>
             </div>
           ))}
         </form>
