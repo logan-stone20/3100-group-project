@@ -96,13 +96,19 @@ const SideContainer = () => {
       <div className="sidebar-item-container">
         <form onInput={pollutionTypeChange}>
           {Object.keys(toxins).map((toxin) => (
-            <div className="option">
-              <input
-                type="checkbox"
-                value={toxin}
-                id={`checkbox-${toxin}`}
-              ></input>
-              <label htmlFor={`checkbox-${toxin}`}>{toxins[toxin].label}</label>
+            <div
+              className={
+                pollutionTypes.includes(toxin) ? "option selected" : "option"
+              }
+            >
+              <div className="checkbox-label-container">
+                <input
+                  type="checkbox"
+                  value={toxin}
+                  id={`checkbox-${toxin}`}
+                ></input>
+                <div className={`checkbox-label`}>{toxins[toxin].label}</div>
+              </div>
             </div>
           ))}
         </form>
@@ -115,14 +121,20 @@ const SideContainer = () => {
       <div className="sidebar-item-container">
         <form onInput={handleSourceChange}>
           {sourcesValues.map((source) => (
-            <div className="option">
-              <input
-                type="checkbox"
-                value={source}
-                key={source}
-                id={`checkbox-${source}`}
-              ></input>
-              <label htmlFor={`checkbox-${source}`}>{source}</label>
+            <div
+              className={
+                sources.includes(source) ? "option selected" : "option"
+              }
+            >
+              <div className="checkbox-label-container">
+                <input
+                  type="checkbox"
+                  value={source}
+                  key={source}
+                  id={`checkbox-${source}`}
+                ></input>
+                <div className={`checkbox-label`}>{source}</div>
+              </div>
             </div>
           ))}
         </form>
@@ -135,14 +147,20 @@ const SideContainer = () => {
       <div className="sidebar-item-container not-scrollable">
         <form onInput={handleGroupedByChange}>
           {groupedByValues.map((value) => (
-            <div className="option">
-              <input
-                type="checkbox"
-                value={value}
-                key={value}
-                id={`checkbox-${value}`}
-              ></input>
-              <label htmlFor={`checkbox-${value}`}>{value}</label>
+            <div
+              className={
+                groupedBy.includes(value) ? "option selected" : "option"
+              }
+            >
+              <div className={"checkbox-label-container"}>
+                <input
+                  type="checkbox"
+                  value={value}
+                  key={value}
+                  id={`checkbox-${value}`}
+                ></input>
+                <div className={`checkbox-label`}>{value}</div>
+              </div>
             </div>
           ))}
         </form>
