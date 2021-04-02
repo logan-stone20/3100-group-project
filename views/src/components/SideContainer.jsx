@@ -50,6 +50,7 @@ const SideContainer = () => {
   useEffect(() => {
     if (groupedBy.length > 0) {
       let string = "Your data will be grouped on";
+      // eslint-disable-next-line array-callback-return
       groupedBy.map((column, index) => {
         string += ` ${column}`;
         if (index < groupedBy.length - 1) {
