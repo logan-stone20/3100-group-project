@@ -8,7 +8,7 @@ const assert = require("assert");
 const axios = require("axios");
 const { provinces, sources, toxins } = require("../utils/consts");
 
-const url = "http://localhost:3000";
+const url = "http://localhost:3001";
 
 const postRequest = (path, data) => axios.post(url + path, data);
 

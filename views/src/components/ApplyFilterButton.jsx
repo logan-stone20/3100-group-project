@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { FormContext } from "../context/FormContextProvider";
 import "./ApplyFiltersButton.css";
 
 const ApplyFiltersButton = () => {
-  const { data, sendRequest } = useContext(FormContext);
+  const {sendRequest } = useContext(FormContext);
 
   return (
     <button className="apply-filters" onClick={sendRequest}>
